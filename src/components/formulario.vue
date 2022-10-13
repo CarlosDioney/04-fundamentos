@@ -37,7 +37,7 @@
         </form>
         </div>
             <div class="col-12 col-md-8">
-                <total-proyectos :numeroProyectos="numeroProyectos" :proyectos="proyectos" :CambiarEstado="CambiarEstado" :limpiarData="limpiarData"/>
+                <total-proyectos :numeroProyectos="numeroProyectos" :proyectos="proyectos" :CambiarEstado="CambiarEstado" :limpiarData="limpiarData" :remove="remove"/>
             </div>
     </div>
     <hr>
@@ -67,7 +67,8 @@ import TotalProyectos from './TotalProyectos.vue';
                     urgente: this.urgente,
                     completado: false,
                 };
-                this.proyectos.push(proyecto);    
+                this.proyectos.push(proyecto);   
+                
 
                 this.saveData();
 
@@ -89,6 +90,10 @@ import TotalProyectos from './TotalProyectos.vue';
                 this.proyectos = [];
                 localStorage.clear();
             },
+            remove: function(index) {
+            this.proyectos.splice(index, 1);
+            this.saveData();
+             },
         },
         computed: {
             numeroProyectos(){
