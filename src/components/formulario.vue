@@ -1,52 +1,3 @@
-<script>
-import { computed } from '@vue/reactivity';
-import ProgressBar from './ProgressBar.vue';
-import TotalProyectos from './TotalProyectos.vue';
-
-    export default{
-  components: { ProgressBar, TotalProyectos },
-        data:() => ({
-            proyecto: "",
-            tipo: "",
-            urgente: false,
-            proyectos: [],
-        }),
-        methods:{
-            registrarProyecto(){
-                const proyecto = {
-                    proyecto: this.proyecto,
-                    tipo: this.tipo,
-                    urgente: this.urgente,
-                    completado: false,
-                };
-                this.proyectos.push(proyecto);                
-                this.proyecto = "";
-                this.tipo = "";
-                this.urgente = false;
-            },
-            CambiarEstado(proyecto, campo){
-               // this.proyectos[id].urgente = !this.proyectos[id].urgente
-               // console.log(proyecto, campo);
-               proyecto[campo] = !proyecto[campo];
-            },
-        },
-        computed: {
-            numeroProyectos(){
-                return this.proyectos.length;
-            },
-            porcentaje (){
-                let completados = 0;
-                this.proyectos.map( proyecto => {
-                    if(proyecto.completado)
-                    completados++;
-                })
-
-                return (completados * 100) / this.numeroProyectos || 0;
-            },
-        },
-    };
-</script>
-
 <template>
 
     <div class="row">
@@ -86,12 +37,75 @@ import TotalProyectos from './TotalProyectos.vue';
         </form>
         </div>
             <div class="col-12 col-md-8">
-                <total-proyectos :numeroProyectos="numeroProyectos" :proyectos="proyectos" :CambiarEstado="CambiarEstado"/>
+                <total-proyectos :numeroProyectos="numeroProyectos" :proyectos="proyectos" :CambiarEstado="CambiarEstado" :limpiarData="limpiarData"/>
             </div>
     </div>
     <hr>
 </template> 
 
+<script>
+import { computed } from '@vue/reactivity';
+import ProgressBar from './ProgressBar.vue';
+import TotalProyectos from './TotalProyectos.vue';
+
+    export default{
+  components: { ProgressBar, TotalProyectos },
+    mounted(){
+        this.proyectos = JSON.parse(localStorage.getItem("proyectos")) || [];
+    },
+        data:() => ({
+            proyecto: "",
+            tipo: "",
+            urgente: false,
+            proyectos: [],
+        }),
+        methods:{
+            registrarProyecto(){
+                const proyecto = {
+                    proyecto: this.proyecto,
+                    tipo: this.tipo,
+                    urgente: this.urgente,
+                    completado: false,
+                };
+                this.proyectos.push(proyecto);    
+
+                this.saveData();
+
+                this.proyecto = "";
+                this.tipo = "";
+                this.urgente = false;
+            },
+            CambiarEstado(proyecto, campo){
+               // this.proyectos[id].urgente = !this.proyectos[id].urgente
+               // console.log(proyecto, campo);
+               proyecto[campo] = !proyecto[campo];
+               this.saveData();
+            },
+            saveData(){
+                localStorage.setItem("proyectos", JSON.stringify(this.proyectos));
+            },
+           
+            limpiarData(){
+                this.proyectos = [];
+                localStorage.clear();
+            },
+        },
+        computed: {
+            numeroProyectos(){
+                return this.proyectos.length;
+            },
+            porcentaje (){
+                let completados = 0;
+                this.proyectos.map( proyecto => {
+                    if(proyecto.completado)
+                    completados++;
+                })
+
+                return (completados * 100) / this.numeroProyectos || 0;
+            },
+        },
+    };
+</script>
 
 
 
